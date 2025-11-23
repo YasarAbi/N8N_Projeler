@@ -1,45 +1,45 @@
-# 🚀 Yaşar Abi'nin n8n Otomasyon Projeleri
+# 🚀 Yaşar Abi'nin n8n Otomasyon Atölyesi
 
-![n8n](https://img.shields.io/badge/n8n-Automations-orange?style=for-the-badge&logo=n8n)
+![n8n](https://img.shields.io/badge/n8n-Workflow-orange?style=for-the-badge&logo=n8n)
 ![GitHub](https://img.shields.io/badge/Open%20Source-Yes-green?style=for-the-badge&logo=github)
+![Maintenance](https://img.shields.io/badge/Maintained-Yes-blue?style=for-the-badge)
 
 Selamlar! 👋
-Bu repository, **n8n** kullanarak geliştirdiğim kişisel otomasyon süreçlerini, trading botlarını ve hayatı kolaylaştıran araçları içerir. Açık kaynak kültürüne katkı sağlamak amacıyla projelerimi burada paylaşıyorum.
+Bu repository, **n8n** kullanarak geliştirdiğim otomasyon süreçlerini, botları ve entegrasyonları topladığım kişisel kütüphanemdir.
 
-İster direkt kullanın, ister kendi ihtiyaçlarınıza göre düzenleyin.
-
----
-
-## 📂 Projeler Listesi
-
-### 1. 🤖 Binance Futures Trading Bot (Telegram Entegreli)
-Binance Vadeli İşlemler (Futures) hesabınızı Telegram üzerinden yönetmenizi sağlayan, güvenlik odaklı bir ticaret asistanı.
-
-* **Dosya:** `Binance_Bot.json`
-* **Özellikler:**
-  * 📊 **Cüzdan & PNL Raporu:** Tek komutla toplam bakiye, marjin ve anlık kâr/zarar durumu.
-  * 🚨 **Panik Butonu:** Acil durumlarda tüm açık pozisyonları anında Market fiyatından kapatma.
-  * 🔐 **Kişisel Güvenlik:** Sadece yetkili Telegram kullanıcısından gelen komutları işleme alır.
-  * 🧠 **Akıllı Emir:** Coin'e özel fiyat hassasiyetini (precision) otomatik hesaplar, API hatalarını önler.
-  * 💰 **Multi-Asset Desteği:** Cüzdandaki USDT ve USDC bakiyelerini otomatik tarar.
+Amacım; finansal takip, kişisel asistanlık ve veri yönetimi gibi konularda işleri kolaylaştıran **açık kaynak** çözümler üretmek ve paylaşmaktır. Haftalık olarak yeni projeler eklemeye çalışıyorum.
 
 ---
 
-## ⚙️ Nasıl Kullanılır?
+## 📚 Proje Listesi
 
-1.  İlgili projenin `.json` dosyasını indirin.
-2.  Kendi **n8n** panelinizde **"Import from File"** diyerek yükleyin.
-3.  Workflow içindeki **Credentials** (API Anahtarları) alanlarını kendi bilgilerinizle doldurun.
-4.  Varsa `Sticky Note` (Sarı notlar) içindeki özel ayarları (örn: Telegram kullanıcı adı) yapın.
-5.  **Activate** butonuna basıp arkanıza yaslanın! 🚀
+Buradaki klasörlere tıklayarak ilgili projenin detaylarına, kurulum rehberine ve `.json` dosyalarına ulaşabilirsiniz.
 
-## ⚠️ Yasal Uyarı & Sorumluluk Reddi
-
-Burada paylaşılan kodlar **eğitim ve kişisel kullanım** amaçlıdır.
-* **Finansal Tavsiye Değildir:** Trading botları veya finansal araçlar kullanmak risk içerir.
-* **Sorumluluk:** Bu yazılımları kullanarak yaptığınız işlemlerden doğabilecek kâr veya zarar tamamen kullanıcının sorumluluğundadır.
-* API anahtarlarınızın güvenliğini sağlamak sizin sorumluluğunuzdadır.
+| ID | Proje Adı | Kategori | Durum |
+| :--- | :--- | :--- | :--- |
+| **001** | [**Binance Futures Telegram Bot**](./001_Binance_Telegram_Bot) | 💰 Finans / Trading | ✅ Yayında |
+| **002** | *Yakında...* | ⏳ | 🚧 Hazırlanıyor |
+| **003** | *Yakında...* | ⏳ | 🚧 Hazırlanıyor |
 
 ---
 
-⭐ **Projeleri beğendiyseniz sağ üstten Star vermeyi unutmayın!**
+## 🛠️ Genel Kurulum Mantığı
+
+Bu repodaki projeleri kullanmak için temel adımlar şöyledir (Her projenin kendi klasöründe detaylı rehber mevcuttur):
+
+1.  **İndir:** İlgili projenin klasöründeki `.json` dosyasını bilgisayarınıza indirin.
+2.  **İçe Aktar (Import):** n8n panelinizde sağ üstten `Import from File` seçeneği ile dosyayı yükleyin.
+3.  **Kimlik Doğrulama (Credentials):** Workflow içindeki kırmızı uyarı veren node'lara (Telegram, Google Sheets, OpenAI vb.) kendi API anahtarlarınızı girin.
+4.  **Aktifleştir:** Workflow'u `Active` konuma getirin.
+
+---
+
+## 🤝 Katkıda Bulunma
+
+Projelerimi geliştirmek veya hata bildirmek isterseniz:
+* Bir **Issue** açabilirsiniz.
+* Projeyi **Fork**'layıp geliştirmeler yaptıktan sonra **Pull Request** gönderebilirsiniz.
+* Ya da sadece bir ⭐ **Star** bırakarak destek olabilirsiniz!
+
+---
+*Bu repo [Yaşar Abi](https://github.com/YasarAbi) tarafından yönetilmektedir.*
