@@ -1,0 +1,1260 @@
+{
+  "name": "Binance_Panel_Musteri",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1584,
+        -64
+      ],
+      "id": "cac9b66f-58b9-4027-90a0-7acfaa0e86e2",
+      "name": "Telegram Trigger",
+      "webhookId": "01d7149c-9aea-4c01-88d9-85945f3fe040",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8d8da87f-4032-4ddf-8cd6-5754b0c122d2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/start"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "de60fb90-bcaf-4af3-b2cf-c21efb07c20a",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "Bakiye",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Balance"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3c53f060-7b77-4532-ad49-c0e818aefb6e",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "Açık Pozisyon",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Open Position"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "26d18c47-46d8-40bb-ab57-123f9aac512f",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "Eth",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Eth"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "459941a6-3a97-4fc0-99a6-662ea4a2ff8f",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "closePosition",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "closePosition"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -1136,
+        -112
+      ],
+      "id": "32ba8ad5-c4ae-4088-8284-0043158f235d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=🏦 𝗖Ü𝗭𝗗𝗔𝗡 𝗗𝗨𝗥𝗨𝗠𝗨 (FUTURES) 🏦\n\n💵 𝗧𝗼𝗽𝗹𝗮𝗺 𝗕𝗮𝗸𝗶𝘆𝗲: ${{ $json.totalWalletBalance }}\n{{ $json.details }}\n➖➖➖➖➖➖➖➖➖➖\n📊 𝗔çı𝗸 𝗣𝗼𝘇. 𝗣𝗡𝗟: ${{ $json.totalUnrealizedPNL }} {{ $json.totalUnrealizedPNL >= 0 ? '🟢' : '🔴' }}\n💰 𝗡𝗘𝗧 𝗩𝗔𝗥𝗟𝗜𝗞 (Equity): ${{ $json.totalEquity }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -384,
+        -336
+      ],
+      "id": "faed059b-e3cd-4bcd-9e44-59b24c15b310",
+      "name": "Send a text message1",
+      "webhookId": "1abafd59-a276-45f1-b67c-d87fe28e27fc",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Döngünün başındaki veriyi (ve sayacı) 'Wait1' nodundan al\nconst loopData = $('Wait1').item;\n\n// Güncel fiyat verisini 'Get position info2' nodundan al\nconst priceData = $('Get position info2').item;\n\n// Şu anki nodun ana verisini al ($input.item)\nconst item = $input.item;\n\n// 1. Sayacı doğru yerden oku ve 1 artır\nlet counter = loopData.json.counter || 0;\ncounter++;\n\n// 2. Güncel sayacı, durma koşulunu VE fiyatı bir sonraki noda aktar\nitem.json.counter = counter;\nitem.json.stopLoop = (counter >= 10);\nitem.json.markPrice = priceData.json.markPrice; // Fiyatı da taşı!\n\n// 3. Hepsini birleştirip 'If' noduna yolla\nreturn item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        320
+      ],
+      "id": "29c41008-d7f9-4d29-8a8b-b10859ecd523",
+      "name": "Code (Sayaç)"
+    },
+    {
+      "parameters": {
+        "resource": "future",
+        "operation": "position",
+        "symbol": "ETHUSDT"
+      },
+      "type": "n8n-nodes-binance.binance",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        320
+      ],
+      "id": "9ab7803f-94c2-499a-9777-37a73d273ed2",
+      "name": "Get position info2",
+      "credentials": {
+        "binanceApi": {
+          "id": "VJUkYKt9sklR1ZaU",
+          "name": "Binance_main"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "editMessageText",
+        "chatId": "={{ $('ETH güncelleniyor').item.json.result.chat.id }}",
+        "messageId": "={{ $('ETH güncelleniyor').item.json.result.message_id }}",
+        "text": "=Eth fiyatı: {{ $node[\"Get position info2\"].json.markPrice }} ({{ $('Wait1').item.json.counter || 0 }}/10)",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        320
+      ],
+      "id": "cdd01a93-56c3-481a-b0f2-a8e0c55e0805",
+      "name": "Edit a text message2",
+      "webhookId": "829d1d50-e669-41c3-95b5-60fb756585be",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -624,
+        320
+      ],
+      "id": "ed82339e-a201-46a2-9f86-584700639f1c",
+      "name": "Wait1",
+      "webhookId": "f7cd2dd0-8b41-4cd0-b7a7-b30f8068d2e8",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "operation": "editMessageText",
+        "chatId": "={{ $json.result.chat.id }}",
+        "messageId": "={{ $json.result.message_id }}",
+        "text": "=Son kontrol edilen ETH fiyatı: {{ $node[\"Get position info2\"].json.markPrice }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        496,
+        304
+      ],
+      "id": "097a1277-d336-4c24-b699-6a723c9a11ee",
+      "name": "Edit a text message3",
+      "webhookId": "f781acfa-6617-4838-bd40-a616866256c4",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "efc9c13a-dcfb-45bb-910d-11e57a6c3ccd",
+              "leftValue": "={{ $json.hasPosition }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0aeffbd8-536d-485b-81c6-fab1af23002f",
+      "name": "Pozisyon Var mı?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -384,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message_id }}",
+        "text": "=🔔 𝗣𝗢𝗭𝗜𝗦𝗬𝗢𝗡 𝗥𝗔𝗣𝗢𝗥𝗨 🔔\n\n💎 𝗦𝗲𝗺𝗯𝗼𝗹: #{{ $json.symbol }}\n🧭 𝗬ö𝗻: {{ ($json.notional / $json.leverage) > 0 ? '🐂 LONG (Yükseliş)' : '🐻 SHORT (Düşüş)' }}\n⚡ 𝗞𝗮𝗹𝗱ı𝗿𝗮ç: x{{ $json.leverage }}\n\n➖➖➖➖➖➖➖➖➖➖\n🎯 𝗚𝗶𝗿𝗶ş 𝗙𝗶𝘆𝗮𝘁ı: ${{ $json.entryPrice }}\n💼 𝗠𝗮𝗿𝗷𝗶𝗻 (Cüzdan): ${{ Math.abs($json.notional / $json.leverage).toFixed(2) }}\n💰 𝗣𝗼𝘇. 𝗕ü𝘆ü𝗸𝗹üğü: ${{ Math.abs($json.notional).toFixed(2) }}\n➖➖➖➖➖➖➖➖➖➖\n\n{{ $json.unRealizedProfit > 0 ? '🤑 𝗔𝗡𝗟𝗜𝗞 𝗞Â𝗥 (PNL):' : '🩸 𝗔𝗡𝗟𝗜𝗞 𝗭𝗔𝗥𝗔𝗥 (PNL):' }}\n👉 ${{ $json.unRealizedProfit }} {{ $json.unRealizedProfit > 0 ? '✅' : '⚠️' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "8f99fced-92aa-4525-ba4f-baabb7401177",
+      "name": "Pozisyon Bilgisi At",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        -160
+      ],
+      "webhookId": "88196e3d-cec6-4ff3-a9ac-5c6c440ca72d",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Binance'den gelen tüm pozisyonları al\nconst allPositions = items.map(item => item.json);\n\n// Sadece Entry Price 0'dan büyük olanları (Açık Pozisyonları) filtrele\nconst openPositions = allPositions.filter(pos => parseFloat(pos.entryPrice) > 0);\n\n// Eğer açık pozisyon varsa, her birini ayrı item olarak döndür\nif (openPositions.length > 0) {\n  return openPositions.map(pos => ({\n    json: {\n      ...pos,\n      hasPosition: true,\n      message_id: $('Telegram Trigger').first().json.message.chat.id\n    }\n  }));\n}\n\n// Eğer hiç açık pozisyon yoksa, 'yok' mesajı attırmak için tek bir item döndür\nreturn [\n  {\n    json: {\n      hasPosition: false,\n      message_id: $('Telegram Trigger').first().json.message.chat.id\n    }\n  }\n];"
+      },
+      "id": "c44ac245-5eea-406a-b20d-9183ba656b01",
+      "name": "Filtreleme Mantığı2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "efc9c13a-dcfb-45bb-910d-11e57a6c3ccd",
+              "leftValue": "={{ $json.hasPosition }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "160e500d-fa7d-4d44-a002-593c6e6cedb6",
+      "name": "Pozisyon Var mı?2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -416,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "future",
+        "operation": "position"
+      },
+      "id": "7b3205b7-0a22-4717-8c13-5296bd0857db",
+      "name": "Get position info4",
+      "type": "n8n-nodes-binance.binance",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        896
+      ],
+      "credentials": {
+        "binanceApi": {
+          "id": "VJUkYKt9sklR1ZaU",
+          "name": "Binance_main"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "future",
+        "operation": "order",
+        "side": "={{ $json.finalSide }}",
+        "symbol": "={{ $json.symbol }}",
+        "quantity": "={{ $json.finalQuantity }}",
+        "price": "={{ $json.finalPrice }}",
+        "reduceOnly": true
+      },
+      "type": "n8n-nodes-binance.binance",
+      "typeVersion": 1,
+      "position": [
+        480,
+        704
+      ],
+      "id": "b3f14e1f-60f5-4050-ae73-317336916234",
+      "name": "Buy or sell a cryptocurrency",
+      "credentials": {
+        "binanceApi": {
+          "id": "VJUkYKt9sklR1ZaU",
+          "name": "Binance_main"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Pozisyon Var mı?2').item.json.message_id }}",
+        "text": "=Pozisyon Kapatıldı!\nKar Tutarı: ${{ $('Pozisyon Var mı?2').item.json.unRealizedProfit }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "a2deaea7-de8c-4343-a221-e953b6fcb21a",
+      "name": "Pozisyon Bilgisi At2",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        704
+      ],
+      "webhookId": "1dd4a4b7-3812-4360-be4c-a6da50b9996a",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message_id }}",
+        "text": "=Mevcut posizyon yok.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        992
+      ],
+      "id": "4e240bb3-951d-4cd9-9ae6-cbaf86e46abe",
+      "name": "Send a text message6",
+      "webhookId": "9f5fa84b-60e4-4587-8beb-da12ea8465df",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $json.message_id }}",
+        "message": "Reyiz yanlış olmasın?\n\nTüm pozisyonlar market fiyatı üzerinden kapatılacak.\nCevap vermek zorundasın. Yatırımın riske girebilir.",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "✅ Onaylıyorum"
+          }
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 5,
+              "resumeUnit": "minutes"
+            }
+          },
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        800
+      ],
+      "id": "fa8f6a8f-55bb-4603-9705-41111c44f826",
+      "name": "Send message and wait for response",
+      "webhookId": "7fb48082-94d8-427c-b5b5-680b6c30c208",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "550e74e0-79c8-4e01-a3f9-3ae8da671100",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        32,
+        800
+      ],
+      "id": "ded22c0b-33c4-41c2-a9cd-5bcf07974bcb",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Filtreleme Mantığı2').item.json.message_id }}",
+        "text": "=İşlem iptal edildi. Bol kazançlar!",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        896
+      ],
+      "id": "02b83e6a-4a13-4e1f-81d2-0229fb3e283d",
+      "name": "Send a text message8",
+      "webhookId": "41688ddd-938f-4bd3-82c1-9aeeb87a52bb",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// SORUN ÇÖZÜMÜ:\n// Veriler Telegram node'undan değil, hafızadaki 'Filtreleme Mantığı2' node'undan çekiliyor.\n// Böylece Telegram onayı araya girse bile pozisyon verilerini kaybetmiyoruz.\n\nconst positionItems = $('Filtreleme Mantığı2').all(); \nconst results = [];\n\nfor (const item of positionItems) {\n  const json = item.json;\n  \n  // Verileri al (Artık hatasız gelecek)\n  let positionAmt = parseFloat(json.positionAmt);\n  let markPrice = parseFloat(json.markPrice);\n  let symbol = json.symbol;\n  \n  // 1. YÖN BELİRLE\n  const side = positionAmt > 0 ? 'SELL' : 'BUY';\n  \n  // 2. MİKTAR AYARI\n  let rawQty = Math.abs(positionAmt);\n  \n  // 3. FİYAT AYARI (Precision - Kasap Modu)\n  let decimals = 4; \n  \n  if (symbol.includes(\"BTC\") || symbol.includes(\"ETH\") || markPrice > 500) {\n    decimals = 1; \n  } else if (markPrice > 10) {\n    decimals = 2;\n  }\n  \n  // Agresif Fiyat Hesapla\n  let aggressivePrice = 0;\n  if (side === 'SELL') {\n    aggressivePrice = markPrice * 0.98; // %2 ucuza sat\n  } else {\n    aggressivePrice = markPrice * 1.02; // %2 pahalıya al\n  }\n  \n  // Mevcut JSON'a yeni hesaplananları ekle\n  json.finalPrice = aggressivePrice.toFixed(decimals);\n  json.finalQuantity = rawQty;\n  json.finalSide = side;\n  \n  results.push({ json: json });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        704
+      ],
+      "id": "e4f88516-63eb-4d31-9678-085583b08c60",
+      "name": "Market_Emri_Hazirla"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a662adf4-d5c2-44e3-a768-02dd4447db74",
+              "leftValue": "={{ $json.message.from.first_name }}",
+              "rightValue": "KullaniciAdi",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1360,
+        -64
+      ],
+      "id": "99361acb-4341-4af4-bb55-688ac1c63bea",
+      "name": "Kullanıcı Kontrol"
+    },
+    {
+      "parameters": {
+        "content": "## Kullanıcı Kontrolü\nBaşka kullanıcıların verilerini görmesini istemeyiz :) Bu yüzden burada kullanıcımı/kullanıcılarımızı ekleyebiliriz.",
+        "height": 336,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1424,
+        -240
+      ],
+      "id": "6158bab2-baa7-49a0-ad44-5339ebd1afb3",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Bot butonları\nEkstradan buton eklemek isterseniz buradan ekleyebilirsiniz. Yeni eklediğiniz butonları Switch'e eklemeyi unutmayın :) ",
+        "height": 256,
+        "width": 512,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        -688
+      ],
+      "id": "6085143d-cc7f-4dde-847a-31fd76df5610",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "Selam reyiz, neye bakalım?",
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Bakiye",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "Açık Pozisyon",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Eth",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "closePosition",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {},
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -832,
+        -576
+      ],
+      "id": "23e6072a-4f1f-4831-8530-7cdf66ee228b",
+      "name": "Bot Butonları",
+      "webhookId": "f832ad9c-6d1d-4f49-b3a3-71b4716a62a1",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Bakiye Sorgula\nBakiye kontrolü, çok karmaşık değil :) ",
+        "height": 224,
+        "width": 784,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        -416
+      ],
+      "id": "e03ee2a3-3fcb-4b41-b6f8-2a57e8d0786c",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "resource": "future"
+      },
+      "type": "n8n-nodes-binance.binance",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        -336
+      ],
+      "id": "f10b1062-5c42-4e92-bd02-82c15d575cda",
+      "name": "Get Future Bakiye",
+      "credentials": {
+        "binanceApi": {
+          "id": "VJUkYKt9sklR1ZaU",
+          "name": "Binance_main"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Open Position\nMevcuttaki işlemlerinizi detaylı bir şekilde aktarır.",
+        "height": 368,
+        "width": 928
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        -176
+      ],
+      "id": "f5e54ef2-e0d0-498d-a546-86cb7b201aa7",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node'dan gelen veriyi al\nconst data = items[0].json;\n\n// 'assets' listesini çek. Eğer Multi-Asset açıksa tüm coinler burada olur.\n// Eğer assets boşsa veya yoksa boş dizi ata ki kod patlamasın.\nconst assetsList = data.assets || [];\n\nlet totalWalletBalance = 0; // Cüzdan Bakiyesi\nlet totalUnrealizedPNL = 0; // Açık İşlem Kâr/Zarar\nlet detailsText = \"\";       // Hangi coinden ne kadar var listesi\n\nfor (const asset of assetsList) {\n  // String gelen verileri sayıya çevir\n  let balance = parseFloat(asset.walletBalance);\n  let pnl = parseFloat(asset.unrealizedProfit);\n\n  // Sadece bakiyesi 1 Dolar'dan (veya 0'dan) büyük olanları hesaba kat\n  // Böylece cüzdandaki 0.00001'lik tozlar listeyi kirletmez.\n  if (balance > 0.5) {\n    totalWalletBalance += balance;\n    totalUnrealizedPNL += pnl;\n    \n    // Detay metnine ekle (Örn: 🔹 USDC: $508.03)\n    detailsText += `🔹 ${asset.asset}: $${balance.toFixed(2)}\\n`;\n  }\n}\n\n// Net Varlık (Equity) = Cüzdan + PNL\nlet totalEquity = totalWalletBalance + totalUnrealizedPNL;\n\n// Sonuçları sonraki node'a gönder\nreturn [{\n  json: {\n    totalWalletBalance: totalWalletBalance.toFixed(2),\n    totalUnrealizedPNL: totalUnrealizedPNL.toFixed(2),\n    totalEquity: totalEquity.toFixed(2),\n    details: detailsText\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -336
+      ],
+      "id": "29c92cfb-52c1-47b0-a40c-2ce1ed0e563f",
+      "name": "Varlık Hesaplama1"
+    },
+    {
+      "parameters": {
+        "resource": "future",
+        "operation": "position"
+      },
+      "id": "3b087cdb-2840-453b-8d73-fa82db8afe0b",
+      "name": "Pozisyon Verisi",
+      "type": "n8n-nodes-binance.binance",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        -64
+      ],
+      "credentials": {
+        "binanceApi": {
+          "id": "VJUkYKt9sklR1ZaU",
+          "name": "Binance_main"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Binance'den gelen tüm pozisyonları al\nconst allPositions = items.map(item => item.json);\n\n// Sadece Entry Price 0'dan büyük olanları (Açık Pozisyonları) filtrele\nconst openPositions = allPositions.filter(pos => parseFloat(pos.entryPrice) > 0);\n\n// Eğer açık pozisyon varsa, her birini ayrı item olarak döndür\nif (openPositions.length > 0) {\n  return openPositions.map(pos => ({\n    json: {\n      ...pos,\n      hasPosition: true,\n      message_id: $('Telegram Trigger').first().json.message.chat.id\n    }\n  }));\n}\n\n// Eğer hiç açık pozisyon yoksa, 'yok' mesajı attırmak için tek bir item döndür\nreturn [\n  {\n    json: {\n      hasPosition: false,\n      message_id: $('Telegram Trigger').first().json.message.chat.id\n    }\n  }\n];"
+      },
+      "id": "e78a805a-96f6-4c4f-9fe1-228d74acc037",
+      "name": "Pozisyon Kontrol",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message_id }}",
+        "text": "=Mevcut posizyon yok.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        32
+      ],
+      "id": "3c2e1124-d01e-48ac-8b12-ad7bd1757c9d",
+      "name": "Pozisyon Yok",
+      "webhookId": "a6a2b302-fa13-49ac-a0eb-57f88dda50ba",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## ETH Durumu\nFavori networküm **ETH** olduğu için böyle bir buton ekledim. 10 saniye boyunca güncel tutarı iletiyor.",
+        "height": 336,
+        "width": 1568,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        208
+      ],
+      "id": "7ae8a6ec-fe15-4a68-90ab-76f25439c4e0",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Eth fiyatı güncelleniyor...",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -816,
+        320
+      ],
+      "id": "e19d979c-9bae-4083-8b97-5c3a212652e3",
+      "name": "ETH güncelleniyor",
+      "webhookId": "09821099-8fde-4352-b6d6-ecef76316bb0",
+      "credentials": {
+        "telegramApi": {
+          "id": "tWyVeCQCJF4Xuou1",
+          "name": "Kripto_Alarm"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "40ce490b-3057-4504-872f-4c0c358289af",
+              "leftValue": "={{ $('Code (Sayaç)').item.json.stopLoop }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        320
+      ],
+      "id": "db1a10c3-7f9f-4988-9406-85fc5f3fd78d",
+      "name": "Süre doldu mu?"
+    },
+    {
+      "parameters": {
+        "content": "# Panik Butonu\n## Burası acil durum butonumuzdur. Acil durumlarda tüm pozisyonlarımı kapatmamızı sağlar. Cevap verilmesi zorunludur aksi taktirde tüm işlemleri **Market** fiyatından satışını gerçekleştirecektir.",
+        "height": 672,
+        "width": 1792,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        560
+      ],
+      "id": "4829bf01-2d96-4118-ac55-4231e9cc28e9",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "# KURULUM ÖNCESİ GEREKSİNİMLER:\n\nTelegram Credentials: BotFather'dan aldığınız token ile n8n'de \"Telegram Api\" adında bir credential oluşturun.\n\nBinance Credentials: Binance Futures API anahtarınızla \"Binance Api\" adında bir credential oluşturun.\n\nGüvenlik: \"Kullanıcı Kontrol\" node'una girip kendi Telegram kullanıcı adınızı yazın.",
+        "height": 320,
+        "width": 464
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2176,
+        -176
+      ],
+      "id": "283a213c-759d-460a-9f0d-a6e0b1a0b3e4",
+      "name": "Sticky Note6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Kullanıcı Kontrol",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Bot Butonları",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Future Bakiye",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pozisyon Verisi",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ETH güncelleniyor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get position info4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code (Sayaç)": {
+      "main": [
+        [
+          {
+            "node": "Süre doldu mu?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get position info2": {
+      "main": [
+        [
+          {
+            "node": "Edit a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit a text message2": {
+      "main": [
+        [
+          {
+            "node": "Code (Sayaç)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Get position info2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pozisyon Var mı?": {
+      "main": [
+        [
+          {
+            "node": "Pozisyon Bilgisi At",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pozisyon Yok",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtreleme Mantığı2": {
+      "main": [
+        [
+          {
+            "node": "Pozisyon Var mı?2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get position info4": {
+      "main": [
+        [
+          {
+            "node": "Filtreleme Mantığı2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pozisyon Var mı?2": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buy or sell a cryptocurrency": {
+      "main": [
+        [
+          {
+            "node": "Pozisyon Bilgisi At2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Market_Emri_Hazirla",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Market_Emri_Hazirla": {
+      "main": [
+        [
+          {
+            "node": "Buy or sell a cryptocurrency",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kullanıcı Kontrol": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bot Butonları": {
+      "main": [
+        []
+      ]
+    },
+    "Get Future Bakiye": {
+      "main": [
+        [
+          {
+            "node": "Varlık Hesaplama1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Varlık Hesaplama1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pozisyon Verisi": {
+      "main": [
+        [
+          {
+            "node": "Pozisyon Kontrol",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pozisyon Kontrol": {
+      "main": [
+        [
+          {
+            "node": "Pozisyon Var mı?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ETH güncelleniyor": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Süre doldu mu?": {
+      "main": [
+        [
+          {
+            "node": "Edit a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false
+  },
+  "versionId": "9186fe83-480d-4fb6-9455-25a697c88f26",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1f688126254385be070cb79bb47cf7366cb365430c5fa42983cc775339ba6f2b"
+  },
+  "id": "nernSzwlRzAjQtjI",
+  "tags": [
+    {
+      "createdAt": "2025-11-17T06:24:30.554Z",
+      "updatedAt": "2025-11-17T06:24:30.554Z",
+      "id": "p0AJFwtcVxVrbT81",
+      "name": "Kripto"
+    }
+  ]
+}
