@@ -18,8 +18,9 @@ Buradaki klasörlere tıklayarak ilgili projenin detaylarına, kurulum rehberine
 | ID | Proje Adı | Kategori | Durum |
 | :--- | :--- | :--- | :--- |
 | **001** | [**Binance Futures Telegram Bot**](./001_Binance_Telegram_Bot) | 💰 Finans / Trading | ✅ Yayında |
-| **002** | *Yakında...* | ⏳ | 🚧 Hazırlanıyor |
+| **002** | [**Linkedin Yorum Otomasyonu**](./002_Linkedin_Yorum_Otomasyonu) | 🌐 Sosyal Medya | ✅ Yayında |
 | **003** | *Yakında...* | ⏳ | 🚧 Hazırlanıyor |
+| **004** | *Yakında...* | ⏳ | 🚧 Hazırlanıyor |
 
 ---
 

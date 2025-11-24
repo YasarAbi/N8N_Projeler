@@ -1,0 +1,371 @@
+{
+  "name": "Linkedin_yorum_automation_Temp",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        96
+      ],
+      "id": "c81ec3fc-fc16-439e-b1b0-fc24efda2ac1",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "command": "=curl \"{{ $json.targetUrl }}\" \\\n  -H 'accept: application/vnd.linkedin.normalized+json+2.1' \\\n  -H 'accept-language: tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7' \\\n  -H 'cookie: {{ $json.cookie }}' \\\n  -H 'csrf-token: {{ $json.csrfToken }}' \\\n  -H 'sec-ch-prefers-color-scheme: dark' \\\n  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36' \\\n  -H 'x-li-lang: tr_TR' \\\n  -H 'x-li-page-instance: urn:li:page:d_flagship3_detail_base;YzaF0gQlTluYWlBiqKyOSQ==' \\\n  -H 'x-li-pem-metadata: Voyager - Feed - Comments=sort-comments' \\\n  -H 'x-restli-protocol-version: 2.0.0'"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        288,
+        0
+      ],
+      "id": "f5c4d3ff-c981-463b-a2ed-074e60e2fe96",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. JSON Parse\nconst jsonString = $input.first().json.stdout;\nlet data;\ntry {\n    data = JSON.parse(jsonString);\n} catch (e) {\n    return [{ json: { error: \"JSON parse hatası\" } }];\n}\n\n// 2. Lookup\nconst lookup = {};\nconst includedList = data.included || data.data?.included || [];\nincludedList.forEach(item => {\n    if (item.urn) lookup[item.urn] = item;\n    if (item.entityUrn) lookup[item.entityUrn] = item;\n});\n\n// 3. Yorum Listesi\nconst commentsContainer = data.data?.data?.socialDashCommentsBySocialDetail || {};\nconst topLevelCommentUrns = commentsContainer[\"*elements\"] || commentsContainer[\"elements\"] || [];\nconst results = [];\n\n// 4. Analiz\ntopLevelCommentUrns.forEach(commentUrn => {\n    const commentObj = lookup[commentUrn];\n    if (!commentObj) return;\n\n    const authorName = commentObj.commenter?.title?.text || \"Gizli Kullanıcı\";\n    const commentText = commentObj.commentary?.text || \"\";\n    const isMyComment = commentObj.commenter?.author === true;\n\n    // YANIT KONTROLÜ\n    let is_answered = false;\n    const socialDetailUrn = commentObj[\"*socialDetail\"];\n    const socialDetailObj = lookup[socialDetailUrn];\n\n    if (socialDetailObj && socialDetailObj.comments) {\n        const replyUrns = socialDetailObj.comments[\"*elements\"] || socialDetailObj.comments.elements || [];\n        replyUrns.forEach(replyUrn => {\n            const replyObj = lookup[replyUrn];\n            if (replyObj && replyObj.commenter?.author === true) {\n                is_answered = true;\n            }\n        });\n    }\n\n    results.push({\n        json: {\n            author_name: authorName,\n            comment_text: commentText,\n            is_answered: is_answered,\n            is_my_comment: isMyComment,\n            // KRİTİK DÜZELTME: Yazma işlemi için temiz URN'i alıyoruz.\n            // Bu, 'fsd_comment' yerine direkt 'comment' formatını verir.\n            reply_urn: commentObj.urn, \n            display_urn: commentUrn\n        }\n    });\n});\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "id": "c43f7e20-6d99-4f1d-a10f-0fb318987218",
+      "name": "Code in JavaScript",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Girdiden ham cURL verisini alıyoruz (Önceki node'un adı 'Input_Curl', field adı 'curl_command' olmalı)\nconst rawCurl = $input.first().json.curl_command;\n\n// Regex Tanımları\nconst urlRegex = /curl '(.*?)'/;\nconst cookieRegex = /-H 'cookie: (.*?)'/;\nconst csrfRegex = /-H 'csrf-token: (.*?)'/;\n\n// Verileri Çıkarma\nconst urlMatch = rawCurl.match(urlRegex);\nconst cookieMatch = rawCurl.match(cookieRegex);\nconst csrfMatch = rawCurl.match(csrfRegex);\n\nreturn {\n  json: {\n    targetUrl: urlMatch ? urlMatch[1] : null,\n    cookie: cookieMatch ? cookieMatch[1] : null,\n    csrfToken: csrfMatch ? csrfMatch[1] : null,\n    // Headerların geri kalanı standart olduğu için, dinamik değişenleri aldık.\n    // Ancak 'Browser Emulation' için user-agent vb. Execute Command içinde sabit kalabilir.\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        0
+      ],
+      "id": "6f78ada4-ec6f-4209-a413-c996d8bfd2cc",
+      "name": "Ayarlar"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ffcb269a-c515-4096-8b6d-d8f14b0a240a",
+              "leftValue": "={{ $json.is_answered }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "5fcfc006-dbf2-4ed0-8a2b-29d11ba6d8f9",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        944,
+        -16
+      ],
+      "id": "7a9cc59f-ff0c-4300-9eed-d49a52748da2",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -432,
+        -144
+      ],
+      "id": "e697b616-7a45-49c4-95ce-1cd70e5bad9a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "## Yorumları getir ve Yorumları yap\nGönderimizdeki cevaplandırılmayan yorumları tespit edip cevaplandırır.",
+        "height": 368,
+        "width": 1632
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -128
+      ],
+      "id": "2e74b658-cd80-4c56-98db-c2aaa1260f85",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc075ea6-8263-4c60-a145-1a55943a73e4",
+              "name": "curl_command",
+              "value": "=Hoopp! Burayı uçur sonra sakince cUrl yapıştır",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "3fa091fa-6c00-4dd8-90ce-725403b6a24c",
+      "name": "Curl Buraya Bırakılacak :)"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        0
+      ],
+      "id": "a257f228-477c-4692-93ae-ebb6d7b9eb79",
+      "name": "10 saniye bekleyelim, bot'a cikmasin adimiz",
+      "webhookId": "7daa9bc5-5ff9-4f04-b302-2ba58df83eab"
+    },
+    {
+      "parameters": {
+        "command": "=curl 'https://www.linkedin.com/voyager/api/voyagerSocialDashNormComments?decorationId=com.linkedin.voyager.dash.deco.social.NormComment-43' \\\n  -H 'accept: application/vnd.linkedin.normalized+json+2.1' \\\n  -H 'accept-language: tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7' \\\n  -H 'content-type: application/json; charset=UTF-8' \\\n  -H 'cookie: {{ $node[\"Ayarlar\"].json.cookie }}' \\\n  -H 'csrf-token: {{ $node[\"Ayarlar\"].json.csrfToken }}' \\\n  -H 'origin: https://www.linkedin.com' \\\n  -H 'referer: https://www.linkedin.com/' \\\n  -H 'sec-ch-prefers-color-scheme: dark' \\\n  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36' \\\n  -H 'x-li-lang: tr_TR' \\\n  -H 'x-li-page-instance: urn:li:page:d_flagship3_detail_base;U9BboItQQS+G+dIr2k61CQ==' \\\n  -H 'x-li-pem-metadata: Voyager - Feed - Comments=create-a-comment-reply' \\\n  -H 'x-restli-protocol-version: 2.0.0' \\\n  --data-raw '{\"commentary\":{\"text\":\"{{ $node[\"Gemini\"].json.content.parts[0].text }}\",\"$type\":\"com.linkedin.voyager.dash.common.text.TextViewModel\"},\"threadUrn\":\"{{ $('10 saniye bekleyelim, bot\\'a cikmasin adimiz').item.json.reply_urn }}\"}'"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        0
+      ],
+      "id": "d0ae2a45-8330-4798-aa22-d3c1e4ac73ba",
+      "name": "Yorumu Yaz"
+    },
+    {
+      "parameters": {
+        "content": "## cUrl Noktası\nBir API ile çalışmıyoruz.(Zaten çok mümkün gözükmüyor.) Github'ta bıraktığım görselden cUrl nasıl alacağını gösterdim!",
+        "height": 368,
+        "width": 368,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        -128
+      ],
+      "id": "c6fed479-f6c9-4781-8d58-54f387ff5973",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Sen Yaşar Karaali'nin geliştirdiği, LinkedIn yorumlarına otomatik cevap veren açık kaynaklı bir AI asistanısın.\n\nGÖREVİN:\nAşağıdaki kullanıcı, paylaşılan n8n otomasyon projesiyle ilgilendiğini belirten bir yorum yaptı (\"n8n\" veya \"Test\" yazarak).\nOna, projenin GitHub linkini içeren kısa ve samimi bir yanıt yaz.\n\nKULLANICI BİLGİSİ:\nİsim: {{ $json.author_name }}\nYorumu: {{ $json.comment_text }}\n\nPROJE LİNKİ:\nhttps://github.com/YasarAbi/N8N_Projeler\n\nKURALLAR:\n1. Yanıtın kısa ve öz olsun (Maksimum 2 cümle).\n2. Kesinlikle \"DM attım\", \"Özelden yazdım\" DEME. Linki direkt yorumun içinde ver.\n3. Tonun: Enerjik, yardımsever ve hafif esprili (\"Bot hizmetinizde\", \"Kodlar emrinizde\" gibi).\n4. Her seferinde cümleyi biraz değiştir (Hep aynı cevabı verme).\n5. Emojileri kullan (🚀, 🔗, 👨‍💻).\n6. Örnek Çıktı: \"Selam Ahmet, bot geldi! 🤖 Merak ettiğin kodları şuraya bıraktım: [Link]\""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        0
+      ],
+      "id": "d4a577fc-da52-4c95-a33f-44355d304c55",
+      "name": "Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "5H77Y9J69VL8je9a",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Curl Buraya Bırakılacak :)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ayarlar": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "10 saniye bekleyelim, bot'a cikmasin adimiz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Curl Buraya Bırakılacak :)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Curl Buraya Bırakılacak :)": {
+      "main": [
+        [
+          {
+            "node": "Ayarlar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "10 saniye bekleyelim, bot'a cikmasin adimiz": {
+      "main": [
+        [
+          {
+            "node": "Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Yorumu Yaz": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini": {
+      "main": [
+        [
+          {
+            "node": "Yorumu Yaz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a799bbd8-2ba9-4e14-ada1-53b7fc71d45c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1f688126254385be070cb79bb47cf7366cb365430c5fa42983cc775339ba6f2b"
+  },
+  "id": "4ALbhT5uwZjPSgqW",
+  "tags": []
+}
